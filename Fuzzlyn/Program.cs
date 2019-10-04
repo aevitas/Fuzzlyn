@@ -1,12 +1,9 @@
 ﻿using Fuzzlyn.Execution;
-using Fuzzlyn.ProbabilityDistributions;
 using Fuzzlyn.Reduction;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Emit;
 using NDesk.Options;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,13 +11,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
+[assembly: InternalsVisibleTo("Fuzzlyn.UnitTests")]
 namespace Fuzzlyn
 {
     internal class Program
@@ -49,7 +47,7 @@ namespace Fuzzlyn
                 {
                     "options=",
                     "Path to options.json. Command-line options will override options from this file.",
-                    s => options = JsonConvert.DeserializeObject<FuzzlynOptions>(File.ReadAllText(s))
+                    s => options = JsonSerializer.Deserialize<FuzzlynOptions>(File.ReadAllText(s))
                 },
                 { "dump-options", "Dump options to stdout and do nothing else", v => dumpOptions = v != null },
                 { "output-source", "Output program source instead of feeding them directly to Roslyn and execution", v => output = v != null },
@@ -129,7 +127,7 @@ namespace Fuzzlyn
 
             if (dumpOptions)
             {
-                Console.Write(JsonConvert.SerializeObject(options, Formatting.Indented));
+                Console.Write(JsonSerializer.Serialize(options, new JsonSerializerOptions {WriteIndented = true}));
                 return;
             }
 

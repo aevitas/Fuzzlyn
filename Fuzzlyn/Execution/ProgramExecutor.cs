@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Fuzzlyn.Execution
 {
@@ -12,9 +13,9 @@ namespace Fuzzlyn.Execution
     {
         public static void Run()
         {
-            List<ProgramPair> programs = JsonConvert.DeserializeObject<List<ProgramPair>>(Console.In.ReadToEnd());
+            List<ProgramPair> programs = JsonSerializer.Deserialize<List<ProgramPair>>(Console.In.ReadToEnd());
             List<ProgramPairResults> results = programs.Select(RunPair).ToList();
-            Console.Write(JsonConvert.SerializeObject(results));
+            Console.Write(JsonSerializer.Serialize(results));
         }
 
         internal static ProgramPairResults RunPair(ProgramPair pair)
@@ -97,12 +98,12 @@ namespace Fuzzlyn.Execution
 
             using (Process proc = Process.Start(info))
             {
-                proc.StandardInput.Write(JsonConvert.SerializeObject(programs));
+                proc.StandardInput.Write(JsonSerializer.Serialize(programs));
                 proc.StandardInput.Close();
                 string results = proc.StandardOutput.ReadToEnd();
                 proc.WaitForExit();
 
-                return JsonConvert.DeserializeObject<List<ProgramPairResults>>(results);
+                return JsonSerializer.Deserialize<List<ProgramPairResults>>(results);
             }
         }
     }

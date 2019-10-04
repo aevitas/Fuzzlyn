@@ -1,13 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.Json.Serialization;
 
 namespace Fuzzlyn.ProbabilityDistributions
 {
-    [JsonConverter(typeof(ProbabilityDistributionSerializer))]
+    [JsonConverter(typeof(ProbabilityDistributionConverter))]
     internal abstract class ProbabilityDistribution
     {
         public string Type => GetType().Name;
