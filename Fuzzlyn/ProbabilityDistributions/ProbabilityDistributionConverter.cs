@@ -39,17 +39,14 @@ namespace Fuzzlyn.ProbabilityDistributions
 
             if (value is TableDistribution t)
             {
-                writer.WriteStartArray();
+                writer.WriteStartObject(nameof(t.Pairs));
 
                 foreach (var i in t.Pairs)
                 {
-                    writer.WriteStartObject();
-                    writer.WriteNumberValue(i.Key);
-                    writer.WriteNumberValue(i.Value);
-                    writer.WriteEndObject();
+                    writer.WriteNumber(i.Key.ToString(), i.Value);
                 }
 
-                writer.WriteEndArray();
+                writer.WriteEndObject();
             }
 
             if (value is UniformRangeDistribution u)
